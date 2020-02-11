@@ -72,7 +72,10 @@ public class MemberListServlet extends HttpServlet {
 			rd.include(request, response);
 			
 		} catch(Exception e) {
-		throw new ServletException(e);
+			//throw new ServletException(e);
+			request.setAttribute("error", e);
+			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
+			rd.forward(request, response);
 		} finally {
 			try {rs.close();} catch (Exception e) {}
 			try {stmt.close();} catch (Exception e) {}
