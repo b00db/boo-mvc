@@ -23,7 +23,7 @@ public class MemberListServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Connection con = null;
+		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		
@@ -35,15 +35,16 @@ public class MemberListServlet extends HttpServlet {
 			//Class.forName(this.getInitParameter("driver"));
 			
 			ServletContext sc = this.getServletContext();
-			Class.forName(sc.getInitParameter("driver"));
+			//Class.forName(sc.getInitParameter("driver"));
 			
 			// 2. 드라이버를 사용하여 MySQL 서버와 연결하라.
-			con = DriverManager.getConnection(
+			/*conn = DriverManager.getConnection(
 					sc.getInitParameter("url"),
 					sc.getInitParameter("username"),
-					sc.getInitParameter("password")); // url, id, pwd
+					sc.getInitParameter("password")); // url, id, pwd*/
 			// 3. 커넥션 객체로부터 SQL을 던질 객체를 준비하라.
-			stmt = con.createStatement();
+			conn = (Connection) sc.getAttribute("conn");
+			stmt = conn.createStatement();
 			// 4. SQL을 던지는 객체를 사용하여 서버에 질의하라!
 			rs = stmt.executeQuery(
 				"select MNO, MNAME, EMAIL, CRE_DATE" +
@@ -79,7 +80,7 @@ public class MemberListServlet extends HttpServlet {
 		} finally {
 			try {rs.close();} catch (Exception e) {}
 			try {stmt.close();} catch (Exception e) {}
-			try {con.close();} catch (Exception e) {}
+			//try {conn.close();} catch (Exception e) {}
 		}
 	}
 	
