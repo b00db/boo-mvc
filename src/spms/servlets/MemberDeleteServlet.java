@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,13 +26,8 @@ public class MemberDeleteServlet extends HttpServlet {
 			// 1. 사용할 JDBC 드라이버를 등록하라.
 			//DriverManager.registerDriver(new com.mysql.jdbc.Driver());
 			ServletContext sc = this.getServletContext();
-			Class.forName(sc.getInitParameter("driver"));
-
 			// 2. 드라이버를 사용하여 MySQL 서버와 연결하라.
-			conn = DriverManager.getConnection(
-					sc.getInitParameter("url"),
-					sc.getInitParameter("username"),
-					sc.getInitParameter("password")); // url, id, pwd
+			conn = (Connection) sc.getAttribute("conn");
 
 			// 3. 커넥션 객체로부터 SQL을 던질 객체를 준비하라.
 			stmt = conn.createStatement();
@@ -43,10 +39,13 @@ public class MemberDeleteServlet extends HttpServlet {
 			response.sendRedirect("list"); // 6. 리다이렉트
 
 		} catch (Exception e ) {
-			throw new ServletException(e);
+			e.printStackTrace();
+			request.setAttribute("error", e);
+			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
+			rd.forward(request, response);
 		} finally {
 			try { if(stmt != null) stmt.close();} catch(Exception e) {}
-			try { if(conn != null) conn.close();} catch(Exception e) {}
+			//try { if(conn != null) conn.close();} catch(Exception e) {}
 		}
 	}
 }
