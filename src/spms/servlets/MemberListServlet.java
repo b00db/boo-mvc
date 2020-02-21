@@ -23,10 +23,7 @@ public class MemberListServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			ServletContext sc = this.getServletContext();
-			Connection conn = (Connection) sc.getAttribute("conn");
-			
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(conn);
+			MemberDao memberDao = (MemberDao)sc.getAttribute("memberDao");
 			
 			// request에 회원 목록 데이터 보관한다.
 			request.setAttribute("members", memberDao.selectList());
@@ -38,7 +35,7 @@ public class MemberListServlet extends HttpServlet {
 			rd.include(request, response);
 			
 		} catch(Exception e) {
-			//throw new ServletException(e);
+			e.printStackTrace();
 			request.setAttribute("error", e);
 			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
 			rd.forward(request, response);
