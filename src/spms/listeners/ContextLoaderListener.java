@@ -1,34 +1,30 @@
 package spms.listeners;
 
-import java.sql.DriverManager;
+import java.sql.SQLException;
 
+import javax.naming.InitialContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import javax.sql.DataSource;
 
 import spms.dao.MemberDao;
-import spms.util.DBConnectionPool;
 
 @WebListener
 public class ContextLoaderListener implements ServletContextListener {
-	DBConnectionPool connPool;
-	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		try {
 			ServletContext sc = event.getServletContext();
+			
+			InitialContext initialContext = new InitialContext();
+			DataSource ds = (DataSource)initialContext.lookup("java:comp/env/jdbc/studydb");
 
-		    connPool = new DBConnectionPool(
-	    		 sc.getInitParameter("driver"),
-	    		 sc.getInitParameter("url"),
-	    		 sc.getInitParameter("username"),
-	    		 sc.getInitParameter("password"));
+		    MemberDao memberDao = new MemberDao();
+		    memberDao.setDataSource(ds);
 
-		      MemberDao memberDao = new MemberDao();
-		      memberDao.setDbConnectionPool(connPool);
-
-		      sc.setAttribute("memberDao", memberDao);
+		    sc.setAttribute("memberDao", memberDao);
 		      
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -37,9 +33,6 @@ public class ContextLoaderListener implements ServletContextListener {
 	}
 
 	@Override
-	public void contextDestroyed(ServletContextEvent event) {
-		connPool.closeAll();
-
-	}
+	public void contextDestroyed(ServletContextEvent event) {}
 
 }

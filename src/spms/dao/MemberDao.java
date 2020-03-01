@@ -7,14 +7,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import spms.util.DBConnectionPool;
 import spms.vo.Member;
 
 public class MemberDao {
-	DBConnectionPool connPool;
+	DataSource ds;
 	
-	public void setDbConnectionPool(DBConnectionPool connPool) {
-		this.connPool = connPool;
+	public void setDataSource(DataSource ds) {
+		this.ds = ds;
 	}
 	
 	// 회원 정보 조회
@@ -24,7 +26,7 @@ public class MemberDao {
 		ResultSet rs = null;
 		
 		try {
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.createStatement();
 			// SQL을 던지는 객체를 사용하여 서버에 질의하라!
 			rs = stmt.executeQuery(
@@ -53,7 +55,7 @@ public class MemberDao {
 		} finally {
 			try {if (rs != null) rs.close();} catch (Exception e) {}
 			try {if (stmt != null) stmt.close();} catch (Exception e) {}
-			if (connection != null) connPool.returnConnection(connection);
+			try {if (connection != null) connection.close();} catch(Exception e) {}
 		}
 	}
 	
@@ -63,7 +65,7 @@ public class MemberDao {
 		PreparedStatement stmt = null;
 		
 		try {
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.prepareStatement(
 					"INSERT INTO MEMBERS(EMAIL, PWD, MNAME, CRE_DATE, MOD_DATE)"
 					+ " VAlUES (?, ?, ?, NOW(), NOW())"); // 입력 매개변수(In Parameter) 사용
@@ -78,7 +80,7 @@ public class MemberDao {
 			
 		} finally {
 		    try {if (stmt != null) stmt.close();} catch(Exception e) {}
-		    if (connection != null) connPool.returnConnection(connection);
+		    try {if (connection != null) connection.close();} catch(Exception e) {}
 	    }
 	}
 	
@@ -88,7 +90,7 @@ public class MemberDao {
 		Statement stmt = null;
 		
 		try {
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.createStatement();
 			return stmt.executeUpdate(
 					"DELETE FROM MEMBERS WHERE MNO=" + no);
@@ -98,7 +100,7 @@ public class MemberDao {
 			
 		} finally {
 			try { if(stmt != null) stmt.close();} catch(Exception e) {}
-			if (connection != null) connPool.returnConnection(connection);
+			try {if (connection != null) connection.close();} catch(Exception e) {}
 		}
 	}
 	
@@ -109,7 +111,7 @@ public class MemberDao {
 		ResultSet rs = null;
 		
 		try {
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.createStatement();
 			
 			 rs = stmt.executeQuery(
@@ -133,7 +135,7 @@ public class MemberDao {
 		} finally {
 			try { if(rs != null) rs.close(); } catch (Exception e) {}
 			try { if(stmt != null) stmt.close(); } catch (Exception e) {}
-			if (connection != null) connPool.returnConnection(connection);
+			try {if (connection != null) connection.close();} catch(Exception e) {}
 		}
 	}
 	
@@ -143,7 +145,7 @@ public class MemberDao {
 		PreparedStatement stmt = null;
 		
 		try {
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.prepareStatement(
 					"UPDATE MEMBERS SET EMAIL=?, MNAME=?, MOD_DATE=now()"
 					+ " WHERE MNO=?"); // 입력 매개변수(In Parameter) 사용
@@ -158,7 +160,7 @@ public class MemberDao {
 			
 		} finally {
 			try { if(stmt != null) stmt.close();} catch(Exception e) {}
-			if (connection != null) connPool.returnConnection(connection);
+			try {if (connection != null) connection.close();} catch(Exception e) {}
 		}
 	}
 	
@@ -170,7 +172,7 @@ public class MemberDao {
 		ResultSet rs = null;
 		
 		try {
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.prepareStatement(
 							"SELECT MNAME, EMAIL FROM MEMBERS"
 							+ " WHERE EMAIL=? AND PWD=?");
@@ -191,7 +193,7 @@ public class MemberDao {
 		} finally {
 			try { if (rs != null) rs.close(); } catch (Exception e) {}
 			try { if (stmt != null) stmt.close(); } catch (Exception e) {}
-			if (connection != null) connPool.returnConnection(connection);
+			try {if (connection != null) connection.close();} catch(Exception e) {}
 		}
 	}
 }
