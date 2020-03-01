@@ -34,7 +34,7 @@
 	    username="study"
 	    password="study" 
 	    driverClassName="com.mysql.jdbc.Driver"
-	    url="jdbc:mysql://localhost/studydb" 
+	    url="jdbc:mysql://localhost/studydb?characterEncoding=UTF-8&amp;serverTimezone=UTC" 
 	    closeMethod="close"/>
 	
 </Context>
